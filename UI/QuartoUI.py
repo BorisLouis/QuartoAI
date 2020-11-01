@@ -155,3 +155,6 @@ class QuartoUI:
                     )
                     pygame.draw.rect(self.screen, GRAY, rect)
                     pygame.draw.rect(self.screen, WHITE, rect, 3)
+                    row.append(rect)
+            cells.append(row)
+            pygame.display.flip()
