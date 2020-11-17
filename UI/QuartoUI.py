@@ -1,9 +1,11 @@
 import  pygame
 EMPTY = None
-WIDTH = 4
-HEIGHT = 4
+WIDTH = 8
+HEIGHT = 8
+OFFSETW = 200
+OFFSETH = 0
 #declare some general properties
-size = width, height = 600, 400
+size = width, height = 1200, 800
 
 # Colors
 BLACK = (0, 0, 0)
@@ -15,6 +17,7 @@ BOARD_PADDING = 20
 board_width = ((2 / 3) * width) - (BOARD_PADDING * 2)
 board_height = height - (BOARD_PADDING * 2)
 cell_size = int(min(board_width / WIDTH, board_height / HEIGHT))
+im_size = round(0.9 * cell_size)
 board_origin = (BOARD_PADDING, BOARD_PADDING)
 
 
@@ -28,133 +31,236 @@ class QuartoUI:
         pygame.init()
         screen = pygame.display.set_mode(size)
 
+        imgDict = {}
+        imgDictOFF = {}
+
         # Fonts
         OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
         smallFont = pygame.font.Font(OPEN_SANS, 20)
         mediumFont = pygame.font.Font(OPEN_SANS, 28)
         largeFont = pygame.font.Font(OPEN_SANS, 40)
+
         # Add images
         #Small Dark Round Hole
         sdrh = pygame.image.load("UI/assets/images/SmallDarkRoundHole-01.png")
-        sdrh = pygame.transform.scale(sdrh, (cell_size, cell_size))
+        sdrh = pygame.transform.scale(sdrh, (im_size, im_size))
         sdrhOFF = pygame.image.load("UI/assets/images/SmallDarkRoundHoleOFF-01.png")
-        sdrhOFF = pygame.transform.scale(sdrhOFF, (cell_size, cell_size))
+        sdrhOFF = pygame.transform.scale(sdrhOFF, (im_size, im_size))
+
+        #store for the object
+        imgDict[(0,0,0,0)] = sdrh
+        self.off = sdrhOFF
+        imgDictOFF[(0,0,0,0)] = self.off
+
+
 
         #Small Dark Round Plain
         sdrp = pygame.image.load("UI/assets/images/SmallDarkRoundPlain.png")
-        sdrp = pygame.transform.scale(sdrp, (cell_size, cell_size))
+        sdrp = pygame.transform.scale(sdrp, (im_size, im_size))
         sdrpOFF = pygame.image.load("UI/assets/images/SmallDarkRoundPlainOFF-01.png")
-        sdrpOFF = pygame.transform.scale(sdrpOFF, (cell_size, cell_size))
+        sdrpOFF = pygame.transform.scale(sdrpOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 0, 0, 1)] = sdrp
+        imgDictOFF[(0, 0, 0, 1)] = sdrpOFF
 
         # Small Dark Square Hole
         sdsh = pygame.image.load("UI/assets/images/SmallDarkSquareHole-01.png")
-        sdsh = pygame.transform.scale(sdsh, (cell_size, cell_size))
+        sdsh = pygame.transform.scale(sdsh, (im_size, im_size))
         sdshOFF = pygame.image.load("UI/assets/images/SmallDarkSquareHoleOFF-01.png")
-        sdshOFF = pygame.transform.scale(sdshOFF, (cell_size, cell_size))
+        sdshOFF = pygame.transform.scale(sdshOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 0, 1, 0)] = sdsh
+        imgDictOFF[(0, 0, 1, 0)] = sdshOFF
+
 
         #Small Dark Square Plain
         sdsp = pygame.image.load("UI/assets/images/SmallDarkSquarePlain-01.png")
-        sdsp = pygame.transform.scale(sdsp, (cell_size, cell_size))
+        sdsp = pygame.transform.scale(sdsp, (im_size, im_size))
         sdspOFF = pygame.image.load("UI/assets/images/SmallDarkSquarePlainOFF-01.png")
-        sdspOFF = pygame.transform.scale(sdspOFF, (cell_size, cell_size))
+        sdspOFF = pygame.transform.scale(sdspOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 0, 1, 1)] = sdsp
+        imgDictOFF[(0, 0, 1, 1)] = sdspOFF
 
         #Small Light Round Hole
         slrh = pygame.image.load("UI/assets/images/SmallLightRoundHole-01.png")
-        slrh = pygame.transform.scale(slrh, (cell_size, cell_size))
+        slrh = pygame.transform.scale(slrh, (im_size, im_size))
         slrhOFF = pygame.image.load("UI/assets/images/SmallLightRoundHoleOFF-01.png")
-        slrhOFF = pygame.transform.scale(slrhOFF, (cell_size, cell_size))
+        slrhOFF = pygame.transform.scale(slrhOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 1, 0, 0)] = slrh
+        imgDictOFF[(0, 1, 0, 0)] = slrhOFF
 
         # Small Light Round Plain
         slrp = pygame.image.load("UI/assets/images/SmallLightRoundPlain-01.png")
-        slrp = pygame.transform.scale(slrp, (cell_size, cell_size))
+        slrp = pygame.transform.scale(slrp, (im_size, im_size))
         slrpOFF = pygame.image.load("UI/assets/images/SmallLightRoundPlainOFF-01.png")
-        slrpOFF = pygame.transform.scale(slrpOFF, (cell_size, cell_size))
+        slrpOFF = pygame.transform.scale(slrpOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 1, 0, 1)] = slrp
+        imgDictOFF[(0, 1, 0, 1)] = slrpOFF
 
         # Small Light Square Hole
         slsh = pygame.image.load("UI/assets/images/SmallLightSquareHole-01.png")
-        slsh = pygame.transform.scale(slsh, (cell_size, cell_size))
+        slsh = pygame.transform.scale(slsh, (im_size, im_size))
         slshOFF = pygame.image.load("UI/assets/images/SmallLightSquareHoleOFF-01.png")
-        slshOFF = pygame.transform.scale(slshOFF, (cell_size, cell_size))
+        slshOFF = pygame.transform.scale(slshOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 1, 1, 0)] = slsh
+        imgDictOFF[(0, 1, 1, 0)] = slshOFF
 
         # Small Light Square Plain
         slsp = pygame.image.load("UI/assets/images/SmallLightSquarePlain-01.png")
-        slsp = pygame.transform.scale(slsp, (cell_size, cell_size))
+        slsp = pygame.transform.scale(slsp, (im_size, im_size))
         slspOFF = pygame.image.load("UI/assets/images/SmallLightSquarePlainOFF-01.png")
-        slspOFF = pygame.transform.scale(slspOFF, (cell_size, cell_size))
+        slspOFF = pygame.transform.scale(slspOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(0, 1, 1, 1)] = slsp
+        imgDictOFF[(0, 1, 1, 1)] = slspOFF
 
         # Tall Dark Round Hole
         tdrh = pygame.image.load("UI/assets/images/TallDarkRoundHole-01.png")
-        tdrh = pygame.transform.scale(tdrh, (cell_size, cell_size))
+        tdrh = pygame.transform.scale(tdrh, (im_size, im_size))
         tdrhOFF = pygame.image.load("UI/assets/images/TallDarkRoundHoleOFF-01.png")
-        tdrhOFF = pygame.transform.scale(tdrhOFF, (cell_size, cell_size))
+        tdrhOFF = pygame.transform.scale(tdrhOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 0, 0, 0)] = tdrh
+        imgDictOFF[(1, 0, 0, 0)] = tdrhOFF
 
         # Tall Dark Round Plain
         tdrp = pygame.image.load("UI/assets/images/TallDarkRoundPlain-01.png")
-        tdrp = pygame.transform.scale(tdrp, (cell_size, cell_size))
+        tdrp = pygame.transform.scale(tdrp, (im_size, im_size))
         tdrpOFF = pygame.image.load("UI/assets/images/TallDarkRoundPlainOFF-01.png")
-        tdrpOFF = pygame.transform.scale(tdrpOFF, (cell_size, cell_size))
+        tdrpOFF = pygame.transform.scale(tdrpOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 0, 0, 1)] = tdrp
+        imgDictOFF[(1, 0, 0, 1)] = tdrpOFF
 
         # Tall Dark Square Hole
         tdsh = pygame.image.load("UI/assets/images/TallDarkSquareHole.png")
-        tdsh = pygame.transform.scale(tdsh, (cell_size, cell_size))
+        tdsh = pygame.transform.scale(tdsh, (im_size, im_size))
         tdshOFF = pygame.image.load("UI/assets/images/TallDarkSquareHoleOFF-01.png")
-        tdshOFF = pygame.transform.scale(tdshOFF, (cell_size, cell_size))
+        tdshOFF = pygame.transform.scale(tdshOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 0, 1, 0)] = tdsh
+        imgDictOFF[(1, 0, 1, 0)] = tdshOFF
 
         # Tall Dark Square Plain
         tdsp = pygame.image.load("UI/assets/images/TallDarkSquarePlain-01.png")
-        tdsp = pygame.transform.scale(tdsp, (cell_size, cell_size))
+        tdsp = pygame.transform.scale(tdsp, (im_size, im_size))
         tdspOFF = pygame.image.load("UI/assets/images/TallDarkSquarePlainOFF-01.png")
-        tdspOFF = pygame.transform.scale(tdspOFF, (cell_size, cell_size))
+        tdspOFF = pygame.transform.scale(tdspOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 0, 1, 1)] = tdsp
+        imgDictOFF[(1, 0, 1, 1)] = tdspOFF
 
         # Tall Light Round Hole
         tlrh = pygame.image.load("UI/assets/images/TallLightRoundHole-01.png")
-        tlrh = pygame.transform.scale(tlrh, (cell_size, cell_size))
+        tlrh = pygame.transform.scale(tlrh, (im_size, im_size))
         tlrhOFF = pygame.image.load("UI/assets/images/TallLightRoundHoleOFF-01.png")
-        tlrhOFF = pygame.transform.scale(tlrhOFF, (cell_size, cell_size))
+        tlrhOFF = pygame.transform.scale(tlrhOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 1, 0, 0)] = tlrh
+        imgDictOFF[(1, 1, 0, 0)] = tlrhOFF
 
         # Tall Light Round Plain
         tlrp = pygame.image.load("UI/assets/images/TallLightRoundPlain-01.png")
-        tlrp = pygame.transform.scale(tlrp, (cell_size, cell_size))
+        tlrp = pygame.transform.scale(tlrp, (im_size, im_size))
         tlrpOFF = pygame.image.load("UI/assets/images/TallLightRoundPlainOFF-01.png")
-        tlrpOFF = pygame.transform.scale(tlrpOFF, (cell_size, cell_size))
+        tlrpOFF = pygame.transform.scale(tlrpOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 1, 0, 1)] = tlrp
+        imgDictOFF[(1, 0, 0, 1)] = tlrpOFF
 
         # Tall Light Square Hole
         tlsh = pygame.image.load("UI/assets/images/TallLightSquareHole-01.png")
-        tlsh = pygame.transform.scale(tlsh, (cell_size, cell_size))
+        tlsh = pygame.transform.scale(tlsh, (im_size, im_size))
         tlshOFF = pygame.image.load("UI/assets/images/TallLightSquareHoleOFF-01.png")
-        tlshOFF = pygame.transform.scale(tlshOFF, (cell_size, cell_size))
+        tlshOFF = pygame.transform.scale(tlshOFF, (im_size, im_size))
+
+        # store for the object
+        imgDict[(1, 1, 1, 0)] = tlsh
+        imgDictOFF[(1, 1, 1, 0)] = tlshOFF
 
         # Tall Light Square Plain
         tlsp = pygame.image.load("UI/assets/images/TallLightSquarePlain-01.png")
-        tlsp = pygame.transform.scale(tlsp, (cell_size, cell_size))
+        tlsp = pygame.transform.scale(tlsp, (im_size, im_size))
         tlspOFF = pygame.image.load("UI/assets/images/TallLightSquarePlainOFF-01.png")
-        tlspOFF = pygame.transform.scale(tlspOFF, (cell_size, cell_size))
+        tlspOFF = pygame.transform.scale(tlspOFF, (im_size, im_size))
 
+        # store for the object
+        imgDict[(1, 1, 1, 1)] = tlsp
+        imgDictOFF[(1, 1, 1, 1)] = tlspOFF
+
+        self.imgDict = imgDict
+        self.imgDictOFF = imgDictOFF
         self.screen = screen
 
 
+    def update(self, state=None):
 
-    def update(self, state =  [[EMPTY, EMPTY, EMPTY, EMPTY,],
-                       [EMPTY, EMPTY, EMPTY, EMPTY,],
-                       [EMPTY, EMPTY, EMPTY, EMPTY,],
-                       [EMPTY, EMPTY, EMPTY, EMPTY,]]):
-
+        if state is None:
+            state = [[EMPTY, EMPTY, EMPTY, EMPTY],
+                     [EMPTY, EMPTY, EMPTY, EMPTY],
+                     [EMPTY, EMPTY, EMPTY, EMPTY],
+                     [EMPTY, EMPTY, EMPTY, EMPTY]]
         self.screen.fill(BLACK)
 
         # Draw board
         cells = []
+        #i is related to the height (row)
         for i in range(HEIGHT):
             row = []
+            #j is related to the width (col)
             for j in range(WIDTH):
-                if state[i][j] == None:
-                    # Draw rectangle for cell
-                    rect = pygame.Rect(
-                        board_origin[0] + j * cell_size,
-                        board_origin[1] + i * cell_size,
-                        cell_size, cell_size
-                    )
-                    pygame.draw.rect(self.screen, GRAY, rect)
-                    pygame.draw.rect(self.screen, WHITE, rect, 3)
-                    row.append(rect)
+            #main board update
+               if  1 < i < HEIGHT-2 and j<WIDTH-4:
+                   rowIdx = i-2
+                   if state[rowIdx][j] == None:
+                       # Draw rectangle for cell
+                       rect = pygame.Rect(
+                           board_origin[0] + OFFSETW + j * cell_size,
+                           board_origin[1] + OFFSETH + i * cell_size,
+                           cell_size, cell_size
+                       )
+                       pygame.draw.rect(self.screen, GRAY, rect)
+                       pygame.draw.rect(self.screen, WHITE, rect, 3)
+                       row.append(rect)
+
+               if WIDTH-2<=j<WIDTH:
+                   #TODO: make sure correct images are displayed
+                   # Draw rectangle for cell
+
+                   rect = pygame.Rect(
+                       board_origin[0] + OFFSETW + j * cell_size,
+                       board_origin[1] + OFFSETH + i * cell_size,
+                       cell_size, cell_size
+                   )
+
+                   rectImg = pygame.Rect(
+                       board_origin[0] + OFFSETW + j * cell_size + (cell_size-im_size)/2,
+                       board_origin[1] + OFFSETH + i * cell_size + (cell_size-im_size)/2,
+                       im_size, im_size
+
+                   )
+
+                   pygame.draw.rect(self.screen, BLACK, rect)
+                   pygame.draw.rect(self.screen, WHITE, rect, 3)
+                   self.screen.blit(self.imgDict[1, 1, 1, 1], rectImg)
+                   row.append(rect)
+
             cells.append(row)
             pygame.display.flip()
