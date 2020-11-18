@@ -1,15 +1,9 @@
 """
 Quarto AI player
 """
-import time
 
-from Core import QuartoGame
-from UI import QuartoUI
 
-UI = QuartoUI.QuartoUI()
+from Controller import QuartoController
 
-i = 1
-while True:
-    UI.update()
-    time.sleep(100)
-    break
+
+QuartoController.run()

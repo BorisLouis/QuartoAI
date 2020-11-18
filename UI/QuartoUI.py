@@ -1,4 +1,5 @@
 import  pygame
+
 EMPTY = None
 WIDTH = 8
 HEIGHT = 8
@@ -20,21 +21,22 @@ cell_size = int(min(board_width / WIDTH, board_height / HEIGHT))
 im_size = round(0.9 * cell_size)
 board_origin = (BOARD_PADDING, BOARD_PADDING)
 
+#Create game
+pygame.init()
+screen = pygame.display.set_mode(size)
+
+# Fonts
+OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
+smallFont = pygame.font.Font(OPEN_SANS, 20)
+mediumFont = pygame.font.Font(OPEN_SANS, 28)
+largeFont = pygame.font.Font(OPEN_SANS, 60)
 
 class QuartoUI:
     """
     Class control and update the UI of Quarto game
     """
     def __init__(self):
-        #Create game
-        pygame.init()
-        screen = pygame.display.set_mode(size)
 
-        # Fonts
-        OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
-        smallFont = pygame.font.Font(OPEN_SANS, 20)
-        mediumFont = pygame.font.Font(OPEN_SANS, 28)
-        largeFont = pygame.font.Font(OPEN_SANS, 40)
         #create a dictionary mapping state e.g. [0,0,0,0] to the corresponding image of the piece
         imgDict,imgDictOFF = self.getImDict()
 
@@ -75,7 +77,7 @@ class QuartoUI:
                             im_size, im_size
 
                         )
-                        img = self.imgDict[tuple(state[rowIdx][j])]
+                        img = self.imgDict[state[rowIdx][j]]
                         self.screen.blit(img, rectImg)
 
                     row.append(rect)
@@ -104,6 +106,12 @@ class QuartoUI:
                    row.append(rect)
 
             cells.append(row)
+        #add title
+        title = largeFont.render("Play QuartoAI", True, WHITE)
+        titleRect = title.get_rect()
+        titleRect.center = ((width / 2.9), 50)
+        screen.blit(title, titleRect)
+
         pygame.display.flip()
 
 
@@ -138,10 +146,12 @@ class QuartoUI:
         else:
             code[3] = 1
 
-        if code in state:
-            dict2Use = self.imgDictOFF
-        else:
-            dict2Use = self.imgDict
+        dict2Use = self.imgDict
+        for row in state:
+            for col in row:
+                if tuple(code) == col:
+                    dict2Use = self.imgDictOFF
+                    break
 
         return dict2Use[tuple(code)]
 
