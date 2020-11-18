@@ -25,7 +25,6 @@ class QuartoUI:
     """
     Class control and update the UI of Quarto game
     """
-
     def __init__(self):
         #Create game
         pygame.init()
@@ -51,8 +50,6 @@ class QuartoUI:
         imgDict[(0,0,0,0)] = sdrh
         self.off = sdrhOFF
         imgDictOFF[(0,0,0,0)] = self.off
-
-
 
         #Small Dark Round Plain
         sdrp = pygame.image.load("UI/assets/images/SmallDarkRoundPlain.png")
@@ -209,7 +206,6 @@ class QuartoUI:
         self.imgDictOFF = imgDictOFF
         self.screen = screen
 
-
     def update(self, state=None):
 
         if state is None:
@@ -241,26 +237,70 @@ class QuartoUI:
                        row.append(rect)
 
                if WIDTH-2<=j<WIDTH:
-                   #TODO: make sure correct images are displayed
-                   # Draw rectangle for cell
-
+                    #make rectangle for cell
                    rect = pygame.Rect(
                        board_origin[0] + OFFSETW + j * cell_size,
                        board_origin[1] + OFFSETH + i * cell_size,
                        cell_size, cell_size
                    )
-
+                    # make a smaller rectangle for the image so it does not touch the border of the cell
                    rectImg = pygame.Rect(
                        board_origin[0] + OFFSETW + j * cell_size + (cell_size-im_size)/2,
                        board_origin[1] + OFFSETH + i * cell_size + (cell_size-im_size)/2,
                        im_size, im_size
 
                    )
-
+                   img = self.getImgPieceLeft(state,(i,j))
                    pygame.draw.rect(self.screen, BLACK, rect)
                    pygame.draw.rect(self.screen, WHITE, rect, 3)
-                   self.screen.blit(self.imgDict[1, 1, 1, 1], rectImg)
+                   self.screen.blit(img, rectImg)
                    row.append(rect)
 
             cells.append(row)
-            pygame.display.flip()
+        pygame.display.flip()
+
+    def getImgPieceLeft(self,state,idx):
+        nIdx = list(idx)
+        nIdx[1] = nIdx[1]-(WIDTH-2)
+        code = [0,0,0,0]
+
+        # first are plain then hollow
+        if nIdx[0] == 0 or nIdx[0]% 2 == 0:
+            code[0] = 0
+        else:
+            code[0] = 1
+
+        #first half should be black
+        if 0<=nIdx[0]<4:
+            code[1] = 0
+        #second half should be white
+        else:
+            code[1] = 1
+        #left side is round the right side is squared
+        if nIdx[1]==0:
+            code[2] = 0
+        else:
+            code[2] = 1
+
+        #first are plain then hollow
+        if (0<=nIdx[0]<2 or 4<=nIdx[0]<6):
+            code[3] = 0
+        else:
+            code[3] = 1
+
+
+
+        if code in state:
+            dict2Use = self.imgDictOFF
+        else:
+            dict2Use = self.imgDict
+
+        return dict2Use[tuple(code)]
+
+
+
+
+
+
+
+
