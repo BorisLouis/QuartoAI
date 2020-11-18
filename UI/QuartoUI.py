@@ -30,28 +30,137 @@ class QuartoUI:
         pygame.init()
         screen = pygame.display.set_mode(size)
 
-        imgDict = {}
-        imgDictOFF = {}
-
         # Fonts
         OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
         smallFont = pygame.font.Font(OPEN_SANS, 20)
         mediumFont = pygame.font.Font(OPEN_SANS, 28)
         largeFont = pygame.font.Font(OPEN_SANS, 40)
+        #create a dictionary mapping state e.g. [0,0,0,0] to the corresponding image of the piece
+        imgDict,imgDictOFF = self.getImDict()
 
+        self.imgDict = imgDict
+        self.imgDictOFF = imgDictOFF
+        self.screen = screen
+
+    def update(self, state=None):
+        if state is None:
+            state = [[EMPTY, EMPTY, EMPTY, EMPTY],
+                     [EMPTY, EMPTY, EMPTY, EMPTY],
+                     [EMPTY, EMPTY, EMPTY, EMPTY],
+                     [EMPTY, EMPTY, EMPTY, EMPTY]]
+        self.screen.fill(BLACK)
+        # Draw board
+        cells = []
+        #i is related to the height (row)
+        for i in range(HEIGHT):
+            row = []
+            #j is related to the width (col)
+            for j in range(WIDTH):
+            #main board update
+                if  1 < i < HEIGHT-2 and j<WIDTH-4:
+                    rowIdx = i-2
+                    # Draw rectangle for cell
+                    rect = pygame.Rect(
+                        board_origin[0] + OFFSETW + j * cell_size,
+                        board_origin[1] + OFFSETH + i * cell_size,
+                        cell_size, cell_size
+                    )
+                    pygame.draw.rect(self.screen, GRAY, rect)
+                    pygame.draw.rect(self.screen, WHITE, rect, 3)
+
+                    if state[rowIdx][j] != None:
+                        rectImg = pygame.Rect(
+                            board_origin[0] + OFFSETW + j * cell_size + (cell_size - im_size) / 2,
+                            board_origin[1] + OFFSETH + i * cell_size + (cell_size - im_size) / 2,
+                            im_size, im_size
+
+                        )
+                        img = self.imgDict[tuple(state[rowIdx][j])]
+                        self.screen.blit(img, rectImg)
+
+                    row.append(rect)
+
+                #Here we make an additional board to show the player which pieces are still available to play
+                if WIDTH-2<=j<WIDTH:
+                    #make rectangle for cell
+                   rect = pygame.Rect(
+                       board_origin[0] + OFFSETW + j * cell_size,
+                       board_origin[1] + OFFSETH + i * cell_size,
+                       cell_size, cell_size
+                   )
+                    # make a smaller rectangle for the image so it does not touch the border of the cell
+                   rectImg = pygame.Rect(
+                       board_origin[0] + OFFSETW + j * cell_size + (cell_size-im_size)/2,
+                       board_origin[1] + OFFSETH + i * cell_size + (cell_size-im_size)/2,
+                       im_size, im_size
+
+                   )
+                    #get the approprate image to the appropriate location (arbitrary choice made in the function
+                   img = self.getImgPieceLeft(state,(i,j))
+
+                   pygame.draw.rect(self.screen, BLACK, rect)
+                   pygame.draw.rect(self.screen, WHITE, rect, 3)
+                   self.screen.blit(img, rectImg)
+                   row.append(rect)
+
+            cells.append(row)
+        pygame.display.flip()
+
+
+######################## HELPER FUNCTION/BORING TASK ###################################################################
+    def getImgPieceLeft(self,state,idx):
+        #small function that associate a state of the game and a position of piece left to the right image
+        nIdx = list(idx)
+        nIdx[1] = nIdx[1]-(WIDTH-2)
+        code = [0,0,0,0]
+
+        # first are plain then hollow
+        if nIdx[0] == 0 or nIdx[0]% 2 == 0:
+            code[0] = 0
+        else:
+            code[0] = 1
+
+        #first half should be black
+        if 0<=nIdx[0]<4:
+            code[1] = 0
+        #second half should be white
+        else:
+            code[1] = 1
+        #left side is round the right side is squared
+        if nIdx[1]==0:
+            code[2] = 0
+        else:
+            code[2] = 1
+
+        #first are plain then hollow
+        if (0<=nIdx[0]<2 or 4<=nIdx[0]<6):
+            code[3] = 0
+        else:
+            code[3] = 1
+
+        if code in state:
+            dict2Use = self.imgDictOFF
+        else:
+            dict2Use = self.imgDict
+
+        return dict2Use[tuple(code)]
+
+
+    def getImDict(self):
+        imgDict = {}
+        imgDictOFF = {}
         # Add images
-        #Small Dark Round Hole
+        # Small Dark Round Hole
         sdrh = pygame.image.load("UI/assets/images/SmallDarkRoundHole-01.png")
         sdrh = pygame.transform.scale(sdrh, (im_size, im_size))
         sdrhOFF = pygame.image.load("UI/assets/images/SmallDarkRoundHoleOFF-01.png")
         sdrhOFF = pygame.transform.scale(sdrhOFF, (im_size, im_size))
 
-        #store for the object
-        imgDict[(0,0,0,0)] = sdrh
-        self.off = sdrhOFF
-        imgDictOFF[(0,0,0,0)] = self.off
+        # store for the object
+        imgDict[(0, 0, 0, 0)] = sdrh
+        imgDictOFF[(0, 0, 0, 0)] = sdrhOFF
 
-        #Small Dark Round Plain
+        # Small Dark Round Plain
         sdrp = pygame.image.load("UI/assets/images/SmallDarkRoundPlain.png")
         sdrp = pygame.transform.scale(sdrp, (im_size, im_size))
         sdrpOFF = pygame.image.load("UI/assets/images/SmallDarkRoundPlainOFF-01.png")
@@ -71,8 +180,7 @@ class QuartoUI:
         imgDict[(0, 0, 1, 0)] = sdsh
         imgDictOFF[(0, 0, 1, 0)] = sdshOFF
 
-
-        #Small Dark Square Plain
+        # Small Dark Square Plain
         sdsp = pygame.image.load("UI/assets/images/SmallDarkSquarePlain-01.png")
         sdsp = pygame.transform.scale(sdsp, (im_size, im_size))
         sdspOFF = pygame.image.load("UI/assets/images/SmallDarkSquarePlainOFF-01.png")
@@ -82,7 +190,7 @@ class QuartoUI:
         imgDict[(0, 0, 1, 1)] = sdsp
         imgDictOFF[(0, 0, 1, 1)] = sdspOFF
 
-        #Small Light Round Hole
+        # Small Light Round Hole
         slrh = pygame.image.load("UI/assets/images/SmallLightRoundHole-01.png")
         slrh = pygame.transform.scale(slrh, (im_size, im_size))
         slrhOFF = pygame.image.load("UI/assets/images/SmallLightRoundHoleOFF-01.png")
@@ -202,105 +310,7 @@ class QuartoUI:
         imgDict[(1, 1, 1, 1)] = tlsp
         imgDictOFF[(1, 1, 1, 1)] = tlspOFF
 
-        self.imgDict = imgDict
-        self.imgDictOFF = imgDictOFF
-        self.screen = screen
-
-    def update(self, state=None):
-
-        if state is None:
-            state = [[EMPTY, EMPTY, EMPTY, EMPTY],
-                     [EMPTY, EMPTY, EMPTY, EMPTY],
-                     [EMPTY, EMPTY, EMPTY, EMPTY],
-                     [EMPTY, EMPTY, EMPTY, EMPTY]]
-        self.screen.fill(BLACK)
-
-        # Draw board
-        cells = []
-        #i is related to the height (row)
-        for i in range(HEIGHT):
-            row = []
-            #j is related to the width (col)
-            for j in range(WIDTH):
-            #main board update
-               if  1 < i < HEIGHT-2 and j<WIDTH-4:
-                   rowIdx = i-2
-                   if state[rowIdx][j] == None:
-                       # Draw rectangle for cell
-                       rect = pygame.Rect(
-                           board_origin[0] + OFFSETW + j * cell_size,
-                           board_origin[1] + OFFSETH + i * cell_size,
-                           cell_size, cell_size
-                       )
-                       pygame.draw.rect(self.screen, GRAY, rect)
-                       pygame.draw.rect(self.screen, WHITE, rect, 3)
-                       row.append(rect)
-
-               if WIDTH-2<=j<WIDTH:
-                    #make rectangle for cell
-                   rect = pygame.Rect(
-                       board_origin[0] + OFFSETW + j * cell_size,
-                       board_origin[1] + OFFSETH + i * cell_size,
-                       cell_size, cell_size
-                   )
-                    # make a smaller rectangle for the image so it does not touch the border of the cell
-                   rectImg = pygame.Rect(
-                       board_origin[0] + OFFSETW + j * cell_size + (cell_size-im_size)/2,
-                       board_origin[1] + OFFSETH + i * cell_size + (cell_size-im_size)/2,
-                       im_size, im_size
-
-                   )
-                   img = self.getImgPieceLeft(state,(i,j))
-                   pygame.draw.rect(self.screen, BLACK, rect)
-                   pygame.draw.rect(self.screen, WHITE, rect, 3)
-                   self.screen.blit(img, rectImg)
-                   row.append(rect)
-
-            cells.append(row)
-        pygame.display.flip()
-
-    def getImgPieceLeft(self,state,idx):
-        nIdx = list(idx)
-        nIdx[1] = nIdx[1]-(WIDTH-2)
-        code = [0,0,0,0]
-
-        # first are plain then hollow
-        if nIdx[0] == 0 or nIdx[0]% 2 == 0:
-            code[0] = 0
-        else:
-            code[0] = 1
-
-        #first half should be black
-        if 0<=nIdx[0]<4:
-            code[1] = 0
-        #second half should be white
-        else:
-            code[1] = 1
-        #left side is round the right side is squared
-        if nIdx[1]==0:
-            code[2] = 0
-        else:
-            code[2] = 1
-
-        #first are plain then hollow
-        if (0<=nIdx[0]<2 or 4<=nIdx[0]<6):
-            code[3] = 0
-        else:
-            code[3] = 1
-
-
-
-        if code in state:
-            dict2Use = self.imgDictOFF
-        else:
-            dict2Use = self.imgDict
-
-        return dict2Use[tuple(code)]
-
-
-
-
-
+        return imgDict,imgDictOFF
 
 
 
