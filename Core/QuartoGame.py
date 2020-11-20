@@ -9,7 +9,7 @@ class QuartoGame:
         self.height = 4
         self.width  = 4
 
-        self.board  = [[(1,1,0,0), EMPTY, EMPTY, EMPTY,],
+        self.board  = [[EMPTY, EMPTY, EMPTY, EMPTY,],
                        [EMPTY, EMPTY, EMPTY, EMPTY,],
                        [EMPTY, EMPTY, EMPTY, EMPTY,],
                        [EMPTY, EMPTY, EMPTY, EMPTY,]]
