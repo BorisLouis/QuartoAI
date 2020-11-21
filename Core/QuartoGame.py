@@ -1,5 +1,7 @@
 from copy import deepcopy
+import random
 EMPTY = None
+
 class QuartoGame:
     """
     QuartoGame representation
@@ -14,15 +16,28 @@ class QuartoGame:
                        [EMPTY, EMPTY, EMPTY, EMPTY,],
                        [EMPTY, EMPTY, EMPTY, EMPTY,]]
 
+        number = random.randint(0,1)
+
+        if number == 0:
+            self.player = 'player'
+        else:
+            self.player = 'AI'
 
     def getBoard(self):
         return self.board
 
-    def player(self):
+    def getPlayer(self):
         """
            Returns player who has the next turn on a board.
         """
-        raise NotImplementedError
+        return self.player
+
+    def switchPlayer(self):
+        if self.player == 'AI':
+            self.player = 'player'
+        else:
+            self.player = 'AI'
+
 
     def actions(self):
         """
@@ -46,4 +61,17 @@ class QuartoGame:
         """
         Returns True if game is over, false otherwise
         """
+        raise NotImplementedError
+
+
+class QuartoAI:
+    def __init__(self, alpha=0.5, epsilon=0.1):
+        self.q = dict()
+        self.alpha = alpha
+        self.epsilon = epsilon
+
+    def chooseAction(self, board):
+        raise NotImplementedError
+
+    def chooseNextPiece(self, board):
         raise NotImplementedError

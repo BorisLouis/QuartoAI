@@ -24,6 +24,7 @@ board_origin = (BOARD_PADDING, BOARD_PADDING)
 #Create game
 pygame.init()
 screen = pygame.display.set_mode(size)
+pygame.display.set_caption('QuartoAI game')
 
 # Fonts
 OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
@@ -44,13 +45,14 @@ class QuartoUI:
         self.imgDictOFF = imgDictOFF
         self.screen = screen
 
-    def update(self, state=None):
+    def update(self, state=None, message=None):
         if state is None:
             state = [[EMPTY, EMPTY, EMPTY, EMPTY],
                      [EMPTY, EMPTY, EMPTY, EMPTY],
                      [EMPTY, EMPTY, EMPTY, EMPTY],
                      [EMPTY, EMPTY, EMPTY, EMPTY]]
         self.screen.fill(BLACK)
+
         # Draw board
         cells = []
         #i is related to the height (row)
@@ -112,8 +114,19 @@ class QuartoUI:
         titleRect.center = ((width / 2.9), 50)
         screen.blit(title, titleRect)
 
-        pygame.display.flip()
 
+        #add additional message
+        text = mediumFont.render(message, True, WHITE)
+        # create a rectangular object for the
+        # text surface object
+        textRect = text.get_rect()
+        # set the center of the rectangular object.
+        textRect.center = (50,height-100)
+        screen.blit(text, textRect)
+
+
+
+        pygame.display.flip()
 
 ######################## HELPER FUNCTION/BORING TASK ###################################################################
     def getImgPieceLeft(self,state,idx):
