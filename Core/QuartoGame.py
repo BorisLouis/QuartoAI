@@ -16,7 +16,7 @@ class QuartoGame:
                        [EMPTY, EMPTY, EMPTY, EMPTY,],
                        [EMPTY, EMPTY, EMPTY, EMPTY,]]
 
-        number = random.randint(0,1)
+        number = 0#random.randint(0,1)
 
         if number == 0:
             self.player = 'player'
@@ -37,6 +37,8 @@ class QuartoGame:
             self.player = 'player'
         else:
             self.player = 'AI'
+    def updatePieceToPlay(self,piece):
+        self.currentPiece = piece
 
 
     def actions(self):

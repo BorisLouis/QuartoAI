@@ -13,9 +13,10 @@ state = [[EMPTY, EMPTY, EMPTY, EMPTY],
          [EMPTY, EMPTY, EMPTY, EMPTY],
          [EMPTY, EMPTY, EMPTY, EMPTY]]
 
+QuartoController.run()
 
-UI = QuartoUI.QuartoUI()
-while True:
-    UI.update(state,'POGU')
-    time.sleep(20)
-    break
+#UI = QuartoUI.QuartoUI()
+#while True:
+#    UI.update(state,'POGU')
+ #   time.sleep(20)
+  #  break

@@ -12,7 +12,7 @@ size = width, height = 1200, 800
 BLACK = (0, 0, 0)
 GRAY = (180, 180, 180)
 WHITE = (255, 255, 255)
-
+RED   = (255,0,0)
 # Compute board size
 BOARD_PADDING = 20
 board_width = ((2 / 3) * width) - (BOARD_PADDING * 2)
@@ -45,7 +45,7 @@ class QuartoUI:
         self.imgDictOFF = imgDictOFF
         self.screen = screen
 
-    def update(self, state=None, message=None):
+    def update(self, state=None, message=None,rectangle = None):
         if state is None:
             state = [[EMPTY, EMPTY, EMPTY, EMPTY],
                      [EMPTY, EMPTY, EMPTY, EMPTY],
@@ -102,12 +102,16 @@ class QuartoUI:
                     #get the approprate image to the appropriate location (arbitrary choice made in the function
                    img = self.getImgPieceLeft(state,(i,j))
 
+                   if rect == rectangle:
+                       surf = img
+
                    pygame.draw.rect(self.screen, BLACK, rect)
                    pygame.draw.rect(self.screen, WHITE, rect, 3)
                    self.screen.blit(img, rectImg)
                    row.append(rect)
 
             cells.append(row)
+        self.cells = cells
         #add title
         title = largeFont.render("Play QuartoAI", True, WHITE)
         titleRect = title.get_rect()
@@ -121,9 +125,12 @@ class QuartoUI:
         # text surface object
         textRect = text.get_rect()
         # set the center of the rectangular object.
-        textRect.center = (50,height-100)
+        textRect.center = (400,height-100)
         screen.blit(text, textRect)
 
+        if rectangle != None:
+            pygame.draw.rect(self.screen, RED, rectangle, 3)
+            self.screen.blit(surf, rectangle)
 
 
         pygame.display.flip()
@@ -167,7 +174,6 @@ class QuartoUI:
                     break
 
         return dict2Use[tuple(code)]
-
 
     def getImDict(self):
         imgDict = {}
