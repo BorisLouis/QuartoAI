@@ -12,10 +12,8 @@ def run():
     game_over = False
     #Initialize the AI, UI and game
     AI = QuartoGame.QuartoAI()
-    qUI = QuartoUI.QuartoUI()
+    UI = QuartoUI.QuartoUI()
     game = QuartoGame.QuartoGame()
-
-
 
     while True:
         for event in pygame.event.get():
@@ -33,25 +31,22 @@ def run():
         # CURRENT PLAYER NEEDS TO CHOOSE THE PIECE FOR THE NEXT PLAYER
         #display message to user
         if currentPlayer != 'player'and not game_over:
-            qUI.update(game.board, AICHOOSING)
+            UI.update(game.pieces, game.board, AICHOOSING)
             # After the piece is chosen, we need to switch player
             game.switchPlayer()
 
         else:
-            qUI.update(game.board, PCHOOOSING)
+            UI.update(game.pieces,game.board, PCHOOOSING)
             # Check for a user move
             click, _, _ = pygame.mouse.get_pressed()
 
             if click == 1 and currentPlayer == 'player' and not game_over:
                 #get position clicked
                 mouse = pygame.mouse.get_pos()
-                rectList = getPiecePosition(qUI.cells)
-
-                isValidPos = getClickedPos(rectList,mouse)
-
-                if isValidPos !=None:
-                    qUI.update(game.board,'Player chose the piece circled in red',isValidPos)
-                    game.updatePieceToPlay(isValidPos)
+                piece,rect = getClickedPiece(UI.rectDict,mouse)
+                if piece !=None:
+                    UI.update(game.pieces,game.board,'Player chose the piece circled in red',rect)
+                    game.updatePieceToPlay(piece)
                     # After the piece is chosen, we need to switch player
                     game.switchPlayer()
 
@@ -136,13 +131,12 @@ def getBoardPosition(cells):
 
     return rectList
 
-def getClickedPos(rectList,mouse):
+def getClickedPiece(rectList,mouse):
 
     isValidPos = None
-    for rect in rectList:
+    for key, elem in rectList.items():
+        rect = pygame.Rect(key)
         isValidPos = rect.collidepoint(mouse)
-
         if isValidPos:
-            return rect
-
-    return isValidPos
+            return elem,rect
+    return None,None

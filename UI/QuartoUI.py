@@ -45,7 +45,7 @@ class QuartoUI:
         self.imgDictOFF = imgDictOFF
         self.screen = screen
 
-    def update(self, state=None, message=None,rectangle = None):
+    def update(self, pieces, state=None, message=None,rectangle = None):
         if state is None:
             state = [[EMPTY, EMPTY, EMPTY, EMPTY],
                      [EMPTY, EMPTY, EMPTY, EMPTY],
@@ -55,6 +55,7 @@ class QuartoUI:
 
         # Draw board
         cells = []
+        rectDict = {}
         #i is related to the height (row)
         for i in range(HEIGHT):
             row = []
@@ -100,7 +101,7 @@ class QuartoUI:
 
                    )
                     #get the approprate image to the appropriate location (arbitrary choice made in the function
-                   img = self.getImgPieceLeft(state,(i,j))
+                   img,code = self.getImgPieceLeft(state,pieces,(i,j))
 
                    if rect == rectangle:
                        surf = img
@@ -109,15 +110,16 @@ class QuartoUI:
                    pygame.draw.rect(self.screen, WHITE, rect, 3)
                    self.screen.blit(img, rectImg)
                    row.append(rect)
+                   rectDict[tuple(rect)] = tuple(code)
 
             cells.append(row)
         self.cells = cells
+        self.rectDict = rectDict
         #add title
         title = largeFont.render("Play QuartoAI", True, WHITE)
         titleRect = title.get_rect()
         titleRect.center = ((width / 2.9), 50)
         screen.blit(title, titleRect)
-
 
         #add additional message
         text = mediumFont.render(message, True, WHITE)
@@ -130,50 +132,28 @@ class QuartoUI:
 
         if rectangle != None:
             pygame.draw.rect(self.screen, RED, rectangle, 3)
-            self.screen.blit(surf, rectangle)
+            self.screen.blit(surf, pygame.Rect(rectangle))
 
 
         pygame.display.flip()
 
 ######################## HELPER FUNCTION/BORING TASK ###################################################################
-    def getImgPieceLeft(self,state,idx):
+    def getImgPieceLeft(self,state, pieces, idx):
         #small function that associate a state of the game and a position of piece left to the right image
         nIdx = list(idx)
         nIdx[1] = nIdx[1]-(WIDTH-2)
-        code = [0,0,0,0]
 
-        # first are plain then hollow
-        if nIdx[0] == 0 or nIdx[0]% 2 == 0:
-            code[0] = 0
-        else:
-            code[0] = 1
-
-        #first half should be black
-        if 0<=nIdx[0]<4:
-            code[1] = 0
-        #second half should be white
-        else:
-            code[1] = 1
-        #left side is round the right side is squared
-        if nIdx[1]==0:
-            code[2] = 0
-        else:
-            code[2] = 1
-
-        #first are plain then hollow
-        if (0<=nIdx[0]<2 or 4<=nIdx[0]<6):
-            code[3] = 0
-        else:
-            code[3] = 1
+        currentPiece = pieces[nIdx[0]][nIdx[1]]
 
         dict2Use = self.imgDict
         for row in state:
             for col in row:
-                if tuple(code) == col:
+                if currentPiece == col:
                     dict2Use = self.imgDictOFF
                     break
 
-        return dict2Use[tuple(code)]
+        return dict2Use[currentPiece], currentPiece
+
 
     def getImDict(self):
         imgDict = {}
