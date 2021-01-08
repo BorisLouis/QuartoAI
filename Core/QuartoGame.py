@@ -25,6 +25,8 @@ class QuartoGame:
                        [(0,1,0,1),(0,1,1,1)],
                        [(1,1,0,1),(1,1,1,1)],]
 
+        self.currentPiece = None
+
         number = 0#random.randint(0,1)
 
         if number == 0:
@@ -47,6 +49,7 @@ class QuartoGame:
         else:
             self.player = 'AI'
     def updatePieceToPlay(self,piece):
+        assert(piece == None or len(piece)==4 and isinstance(piece,tuple))
         self.currentPiece = piece
 
 
@@ -60,7 +63,15 @@ class QuartoGame:
         """
         Update the board following the action chosen
         """
-        raise NotImplementedError
+        assert isinstance(action,dict), 'action is expected to be a dictionary with the case and the piece'
+        assert len(action)==1, 'action is expected to contain only a single action'
+        board = self.board
+        pos = list(action.keys())
+        piece = action[pos[0]]
+
+        board[pos[0][0]][pos[0][1]] = piece
+        self.board = board
+
 
     def winner(self):
         """

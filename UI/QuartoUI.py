@@ -56,6 +56,7 @@ class QuartoUI:
         # Draw board
         cells = []
         rectDict = {}
+        boardDict = {}
         #i is related to the height (row)
         for i in range(HEIGHT):
             row = []
@@ -84,6 +85,7 @@ class QuartoUI:
                         self.screen.blit(img, rectImg)
 
                     row.append(rect)
+                    boardDict[tuple(rect)] = (rowIdx,j)
 
                 #Here we make an additional board to show the player which pieces are still available to play
                 if WIDTH-2<=j<WIDTH:
@@ -115,6 +117,7 @@ class QuartoUI:
             cells.append(row)
         self.cells = cells
         self.rectDict = rectDict
+        self.boardDict = boardDict
         #add title
         title = largeFont.render("Play QuartoAI", True, WHITE)
         titleRect = title.get_rect()
@@ -297,7 +300,7 @@ class QuartoUI:
 
         # store for the object
         imgDict[(1, 1, 0, 1)] = tlrp
-        imgDictOFF[(1, 0, 0, 1)] = tlrpOFF
+        imgDictOFF[(1, 1, 0, 1)] = tlrpOFF
 
         # Tall Light Square Hole
         tlsh = pygame.image.load("UI/assets/images/TallLightSquareHole-01.png")
