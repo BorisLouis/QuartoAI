@@ -102,28 +102,38 @@ def run():
         game_over,reason = game.terminal()
 
         if game_over:
-            if reason[1] == 1:
-                ach = 'row'
-            elif reason[1] == 2:
-                ach = 'column'
-            elif reason[1] == 3:
-                ach = 'diagonal'
-
-            if reason[2] ==0:
-                type = 'size'
-            elif reason[2]==1:
-                type = 'color'
-            elif reason[2] ==2:
-                type = 'shape'
-            elif reason[2] ==2:
-                type = 'fullness'
 
             message = 'The winner is ' + game.player
             UI.update(game.pieces, game.board, message)
             time.sleep(3)
-            message = game.player +' made a ' + ach + ' of four pieces of the same ' + type
+
+            message = generateEndingMessage(game.player,reason)
             UI.update(game.pieces, game.board, message)
             time.sleep(3)
+
+
+def generateEndingMessage(player, reason):
+
+    if reason[1] == 1:
+        ach = 'row'
+    elif reason[1] == 2:
+        ach = 'column'
+    elif reason[1] == 3:
+        ach = 'diagonal'
+
+    if reason[2] == 0:
+        type = 'size'
+    elif reason[2] == 1:
+        type = 'color'
+    elif reason[2] == 2:
+        type = 'shape'
+    elif reason[2] == 2:
+        type = 'fullness'
+
+    message = player + ' made a ' + ach + ' of four pieces of the same ' + type
+
+    return message
+
 
 
 
