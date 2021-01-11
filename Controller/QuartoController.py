@@ -10,7 +10,7 @@ AICHOICE    = 'AI chose the piece circled in red'
 PPLAYING    = 'Please select the position where you want to place the piece'
 PCHOOOSING  = 'Please select the next piece that needs to be played'
 PCHOICE     = 'Player chose the piece circled in red'
-
+PPieceChoice = 'Player placed the piece'
 def run():
     game_over = False
     #Initialize the AI, UI and game
@@ -33,8 +33,8 @@ def run():
 
         # CURRENT PLAYER NEEDS TO CHOOSE THE PIECE FOR THE NEXT PLAYER
         #display message to user
-        if game.currentPiece == None:
-            if currentPlayer != 'player'and not game_over:
+        if game.currentPiece == None and not game_over:
+            if currentPlayer != 'player':
                 UI.update(game.pieces, game.board, AICHOOSING)
                 piece = AI.chooseNextPiece(game.board)
                 #get rectangle corresponding to the piece
@@ -57,6 +57,7 @@ def run():
 
                 if click and currentPlayer == 'player' and not game_over:
                     #get position clicked
+                    #TODO CHECK IF POSITION IS VALID
                     piece,rect = getClickedPosition(UI.rectDict,pos)
                     if piece !=None:
                         UI.update(game.pieces,game.board,PCHOICE,rect)
@@ -65,7 +66,7 @@ def run():
                      #   game.switchPlayer()
                         pygame.event.clear()
 
-        else:
+        elif game.currentPiece != None and not game_over:
         # CURRENT PLAYER NEEDS TO CHOOSE WHERE TO PUT THE PIECE
             # Check for AI move
             if currentPlayer != 'player' and not game_over:
@@ -92,8 +93,38 @@ def run():
                     game.updatePieceToPlay(None)
                     #clear the event list
                     pygame.event.clear()
+
+                    UI.update(game.pieces, game.board, PPieceChoice)
+
                     #switch player
                     #game.switchPlayer()
+
+        game_over,reason = game.terminal()
+
+        if game_over:
+            if reason[1] == 1:
+                ach = 'row'
+            elif reason[1] == 2:
+                ach = 'column'
+            elif reason[1] == 3:
+                ach = 'diagonal'
+
+            if reason[2] ==0:
+                type = 'size'
+            elif reason[2]==1:
+                type = 'color'
+            elif reason[2] ==2:
+                type = 'shape'
+            elif reason[2] ==2:
+                type = 'fullness'
+
+            message = 'The winner is ' + game.player
+            UI.update(game.pieces, game.board, message)
+            time.sleep(3)
+            message = game.player +' made a ' + ach + ' of four pieces of the same ' + type
+            UI.update(game.pieces, game.board, message)
+            time.sleep(3)
+
 
 
 ####### HELPER FUNCTIONS #######
