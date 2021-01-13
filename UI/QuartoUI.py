@@ -13,6 +13,7 @@ BLACK = (0, 0, 0)
 GRAY = (180, 180, 180)
 WHITE = (255, 255, 255)
 RED   = (255,0,0)
+
 # Compute board size
 BOARD_PADDING = 20
 board_width = ((2 / 3) * width) - (BOARD_PADDING * 2)
@@ -21,16 +22,9 @@ cell_size = int(min(board_width / WIDTH, board_height / HEIGHT))
 im_size = round(0.9 * cell_size)
 board_origin = (BOARD_PADDING, BOARD_PADDING)
 
-#Create game
-pygame.init()
-screen = pygame.display.set_mode(size)
-pygame.display.set_caption('QuartoAI game')
 
-# Fonts
-OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
-smallFont = pygame.font.Font(OPEN_SANS, 20)
-mediumFont = pygame.font.Font(OPEN_SANS, 28)
-largeFont = pygame.font.Font(OPEN_SANS, 60)
+
+
 
 class QuartoUI:
     """
@@ -40,6 +34,11 @@ class QuartoUI:
 
         #create a dictionary mapping state e.g. [0,0,0,0] to the corresponding image of the piece
         imgDict,imgDictOFF = self.getImDict()
+        # Create game
+        pygame.init()
+        screen = pygame.display.set_mode(size)
+
+
 
         self.imgDict = imgDict
         self.imgDictOFF = imgDictOFF
@@ -52,6 +51,11 @@ class QuartoUI:
                      [EMPTY, EMPTY, EMPTY, EMPTY],
                      [EMPTY, EMPTY, EMPTY, EMPTY]]
         self.screen.fill(BLACK)
+        # Fonts
+        OPEN_SANS = "UI/assets/fonts/OpenSans-Regular.ttf"
+        smallFont = pygame.font.Font(OPEN_SANS, 20)
+        mediumFont = pygame.font.Font(OPEN_SANS, 28)
+        largeFont = pygame.font.Font(OPEN_SANS, 60)
 
         # Draw board
         cells = []
@@ -122,7 +126,7 @@ class QuartoUI:
         title = largeFont.render("Play QuartoAI", True, WHITE)
         titleRect = title.get_rect()
         titleRect.center = ((width / 2.9), 50)
-        screen.blit(title, titleRect)
+        self.screen.blit(title, titleRect)
 
         #add additional message
         text = mediumFont.render(message, True, WHITE)
@@ -131,7 +135,7 @@ class QuartoUI:
         textRect = text.get_rect()
         # set the center of the rectangular object.
         textRect.center = (400,height-100)
-        screen.blit(text, textRect)
+        self.screen.blit(text, textRect)
 
         if rectangle != None:
             pygame.draw.rect(self.screen, RED, rectangle, 3)

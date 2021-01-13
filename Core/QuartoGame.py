@@ -1,5 +1,6 @@
 from copy import deepcopy
 import random
+import pygame
 EMPTY = None
 
 class QuartoGame:
@@ -27,12 +28,19 @@ class QuartoGame:
 
         self.currentPiece = None
 
-        number = 0#random.randint(0,1)
+        #TODO user interface for game mode
+        gameMode = getGameMode()
 
-        if number == 0:
-            self.player = 'player'
-        else:
-            self.player = 'AI'
+        if gameMode=='PvA':
+            number = random.randint(0,1)
+            self.players = ['Player1','AI']
+            self.currentPlayer = self.players[number]
+
+        elif gameMode =='PvP':
+            number = random.randint(0, 1)
+            self.players = ['Player1', 'Player2']
+            self.currentPlayer = self.players[number]
+
 
     def getBoard(self):
         return self.board
@@ -41,13 +49,17 @@ class QuartoGame:
         """
            Returns player who has the next turn on a board.
         """
-        return self.player
+        return self.currentPlayer
 
     def switchPlayer(self):
-        if self.player == 'AI':
-            self.player = 'player'
+        players = self.players
+
+        if self.currentPlayer == players[0]:
+            self.currentPlayer = players[1]
         else:
-            self.player = 'AI'
+            self.currentPlayer = players[0]
+
+
     def updatePieceToPlay(self,piece):
         assert(piece == None or len(piece)==4 and isinstance(piece,tuple))
         self.currentPiece = piece
@@ -141,6 +153,89 @@ class QuartoGame:
                             return True,(i,3,j)
 
             return False,(None,None)
+
+
+def getGameMode():
+    pygame.init()
+    color_dark = (50,50,50)
+    color_light = (150,150,150)
+
+    (width,height) = (600,600)
+    screen = pygame.display.set_mode((width,height))
+    pygame.display.set_caption('Choose game mode')
+    screen.fill((0,0,0))
+    smallFont = pygame.font.SysFont('Candara',35)
+    largeFont = pygame.font.SysFont('Candara',50)
+    bWidth = 250
+    bHeight = 125
+    button1 = pygame.draw.rect(screen,color_dark,[width/2-bWidth/2,height/3-bHeight/2,bWidth,bHeight])
+    button2 = pygame.draw.rect(screen,color_dark,[width/2-bWidth/2,2*height/3-bHeight/2,bWidth,bHeight])
+
+
+    title = largeFont.render('Choose the game mode',True,(255,255,255))
+    text1 = smallFont.render('Player vs AI', True, (255, 255, 255))
+    text2 = smallFont.render('Player vs Player', True, (255, 255, 255))
+
+    xshift1 = 40
+    xshift2 = 10
+    yshift  = -15
+    screen.blit(text1,(width/2-bWidth/2+xshift1,height/3+yshift))
+    screen.blit(text2,(width/2-bWidth/2+xshift2,2*height/3+yshift))
+    screen.blit(title,(50,height/10))
+    pygame.display.flip()
+
+    running =True
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+                pygame.event.clear()
+                pygame.quit()
+
+                return 'PvA'
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if button1.collidepoint(event.pos):
+                    pygame.event.clear()
+                    pygame.quit()
+
+                    return 'PvA'
+                elif button2.collidepoint(event.pos):
+                    pygame.event.clear()
+                    pygame.quit()
+
+                    return 'PvP'
+
+        mouse = pygame.mouse.get_pos()
+
+        if button1.collidepoint(mouse):
+            button1 = pygame.draw.rect(screen,color_light,[width/2-bWidth/2,height/3-bHeight/2,bWidth,bHeight])
+        else:
+            button1 = pygame.draw.rect(screen, color_dark, [width / 2-bWidth/2, height / 3-bHeight/2, bWidth,bHeight])
+
+        if button2.collidepoint(mouse):
+            button2 = pygame.draw.rect(screen,color_light,[width/2-bWidth/2,2*height/3-bHeight/2,bWidth,bHeight])
+        else:
+            button2 = pygame.draw.rect(screen, color_dark, [width / 2-bWidth/2, 2 * height / 3-bHeight/2, bWidth,bHeight])
+
+        text1 = smallFont.render('Player vs AI', True, (255, 255, 255))
+        text2 = smallFont.render('Player vs Player', True, (255, 255, 255))
+        screen.blit(text1, (width / 2-bWidth/2+xshift1, height / 3+yshift))
+        screen.blit(text2, (width / 2-bWidth/2+xshift2, 2 * height / 3+yshift))
+
+        pygame.display.update()
+
+
+
+
+
+
+
+
+
+
+
 
 def compareTuple(tuple1,tuple2):
     boolTup = []

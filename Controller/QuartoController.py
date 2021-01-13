@@ -7,16 +7,17 @@ import pygame
 AIPLAYING   = 'The AI is playing'
 AICHOOSING  = 'The AI is choosing the next piece'
 AICHOICE    = 'AI chose the piece circled in red'
-PPLAYING    = 'Please select the position where you want to place the piece'
-PCHOOOSING  = 'Please select the next piece that needs to be played'
-PCHOICE     = 'Player chose the piece circled in red'
-PPieceChoice = 'Player placed the piece'
+PPLAYING    = ' please select the piece position'
+PCHOOOSING  = ' please select a piece to be played'
+PCHOICE     = ' chose the piece circled in red'
+PPieceChoice = ' placed the piece'
 def run():
     game_over = False
     #Initialize the AI, UI and game
+    game = QuartoGame.QuartoGame()
     AI = QuartoGame.QuartoAI()
     UI = QuartoUI.QuartoUI()
-    game = QuartoGame.QuartoGame()
+
 
     while True:
         for event in pygame.event.get():
@@ -34,7 +35,8 @@ def run():
         # CURRENT PLAYER NEEDS TO CHOOSE THE PIECE FOR THE NEXT PLAYER
         #display message to user
         if game.currentPiece == None and not game_over:
-            if currentPlayer != 'player':
+            #AI decide the piece
+            if  'Player' not in currentPlayer:
                 UI.update(game.pieces, game.board, AICHOOSING)
                 piece = AI.chooseNextPiece(game.board)
                 #get rectangle corresponding to the piece
@@ -45,9 +47,9 @@ def run():
                     game.updatePieceToPlay(piece)
                     # After the piece is chosen, we need to switch player
                     game.switchPlayer()
-
-            else:
-                UI.update(game.pieces,game.board, PCHOOOSING)
+            #Player decide the piece
+            elif 'Player' in currentPlayer:
+                UI.update(game.pieces,game.board, game.currentPlayer + PCHOOOSING)
                 # Check for a user move
                 click = False
                 for event in pygame.event.get():
@@ -55,27 +57,27 @@ def run():
                         click = True
                         pos = event.pos
 
-                if click and currentPlayer == 'player' and not game_over:
+                if click and not game_over:
                     #get position clicked
                     #TODO CHECK IF POSITION IS VALID
                     piece,rect = getClickedPosition(UI.rectDict,pos)
                     if piece !=None:
-                        UI.update(game.pieces,game.board,PCHOICE,rect)
+                        UI.update(game.pieces,game.board,game.currentPlayer + PCHOICE,rect)
                         game.updatePieceToPlay(piece)
                         # After the piece is chosen, we need to switch player
-                     #   game.switchPlayer()
+                        game.switchPlayer()
                         pygame.event.clear()
 
         elif game.currentPiece != None and not game_over:
         # CURRENT PLAYER NEEDS TO CHOOSE WHERE TO PUT THE PIECE
             # Check for AI move
-            if currentPlayer != 'player' and not game_over:
+            if 'Player' not in currentPlayer and not game_over:
                     UI.update(game.pieces,game.board, AIPLAYING, rect)
                     action = AI.chooseAction(game.board)
                     game.updateBoard(action)
 
-            else:
-                UI.update(game.pieces, game.board, PPLAYING, rect)
+            elif 'Player' in currentPlayer:
+                UI.update(game.pieces, game.board, game.currentPlayer + PPLAYING, rect)
                 #check for player move
                 click = False
                 for event in pygame.event.get():
@@ -83,7 +85,7 @@ def run():
                         click = True
                         pos = event.pos
 
-                if click and currentPlayer == 'player' and not game_over:
+                if click and not game_over:
 
                     case,bRect = getClickedPosition(UI.boardDict,pos)
                     action = {case:game.currentPiece}
@@ -94,20 +96,17 @@ def run():
                     #clear the event list
                     pygame.event.clear()
 
-                    UI.update(game.pieces, game.board, PPieceChoice)
-
-                    #switch player
-                    #game.switchPlayer()
+                    UI.update(game.pieces, game.board, game.currentPlayer + PPieceChoice)
 
         game_over,reason = game.terminal()
 
         if game_over:
 
-            message = 'The winner is ' + game.player
+            message = 'The winner is ' + game.currentPlayer
             UI.update(game.pieces, game.board, message)
             time.sleep(3)
 
-            message = generateEndingMessage(game.player,reason)
+            message = generateEndingMessage(game.currentPlayer,reason)
             UI.update(game.pieces, game.board, message)
             time.sleep(3)
 
