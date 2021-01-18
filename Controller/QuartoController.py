@@ -1,4 +1,4 @@
-from Core import QuartoGame
+from Core import QuartoGame,QuartoAI
 from UI import QuartoUI
 import time
 import pygame
@@ -15,7 +15,8 @@ def run():
     game_over = False
     #Initialize the AI, UI and game
     game = QuartoGame.QuartoGame()
-    AI = QuartoGame.QuartoAI()
+    if 'AI' in game.players:
+        AI = QuartoAI.QuartoAI()
     UI = QuartoUI.QuartoUI()
 
 
@@ -119,21 +120,22 @@ def generateEndingMessage(player, reason):
         ach = 'column'
     elif reason[1] == 3:
         ach = 'diagonal'
-
+    else:
+        ach = 'unknown'
     if reason[2] == 0:
         type = 'size'
     elif reason[2] == 1:
         type = 'color'
     elif reason[2] == 2:
         type = 'shape'
-    elif reason[2] == 2:
+    elif reason[2] == 3:
         type = 'fullness'
+    else:
+        type = 'unknown'
 
     message = player + ' made a ' + ach + ' of four pieces of the same ' + type
 
     return message
-
-
 
 
 ####### HELPER FUNCTIONS #######

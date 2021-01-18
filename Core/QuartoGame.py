@@ -249,19 +249,3 @@ def compareTuple(tuple1,tuple2):
             boolTup.append(0)
 
     return tuple(boolTup)
-
-
-
-
-
-class QuartoAI:
-    def __init__(self, alpha=0.5, epsilon=0.1):
-        self.q = dict()
-        self.alpha = alpha
-        self.epsilon = epsilon
-
-    def chooseAction(self, board):
-        raise NotImplementedError
-
-    def chooseNextPiece(self, board):
-        raise NotImplementedError
